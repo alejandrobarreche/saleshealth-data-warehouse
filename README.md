@@ -1,182 +1,161 @@
-# SalesHealth · Proyecto Final — Gestión de Datos
+# SalesHealth — Data Warehouse, CLTV and Customer Segmentation
 
-Construcción de un entorno analítico de extremo a extremo sobre un dataset sintético del sector salud / bienestar: **5 750 clientes**, **50 productos**, **20 tiendas** y **~42 500 ventas** + **2 330 devoluciones**. El proyecto va desde la base de datos cruda hasta un dashboard interactivo, pasando por el data warehouse, el cálculo del CLTV y la segmentación por clustering.
+[![CI](https://github.com/alejandrobarreche/Data-Management-Saleshealth/actions/workflows/ci.yml/badge.svg)](https://github.com/alejandrobarreche/Data-Management-Saleshealth/actions/workflows/ci.yml)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E)
 
-![Visión general del dashboard SalesHealth](docs/report/Images/dashboard_overview.png)
+End-to-end analytics environment on a synthetic health and wellness retail dataset: **5 750 customers**, **50 products**, **20 stores**, **~42 500 sales** and **2 330 returns**. The project goes from the raw database to an interactive dashboard, through a star-schema data warehouse, Customer Lifetime Value (CLTV) and clustering-based segmentation.
 
-## Lo que hace
+> Final project for the *Data Management* course, Mathematical Engineering degree, Universidad Alfonso X el Sabio (2025–26). The dataset is 100 % synthetic: the findings are internally consistent but not transferable to a real operation.
 
-1. **Modelo Entidad–Relación** y **modelo dimensional** (esquema estrella).
-2. **ETL** desde datos crudos (`public`) hasta el DWH (`dwh`), pasando por un área de `staging`.
-3. **CLTV** por cliente, calculado como:
-   `CLTV = Ingresos_t × Margen_t × Frecuencia_t × Retención_t`
-   junto con **Recencia**, **Tasa de retención**, **AOV** y **Tasa de devolución**.
-4. **PCA(2) + KMeans(k=3)** sobre 8 features estandarizadas para segmentar la base de clientes.
-5. **Dashboard editorial** en HTML estático + backend Flask para la ficha de cliente, simulador de cluster y filtros sobre el DWH en vivo.
+![SalesHealth dashboard overview](docs/report/Images/dashboard_overview.png)
 
-## Modelo de datos
+## What it does
 
-Esquema estrella con dos hechos (`fact_sales`, `fact_returns`) y cuatro dimensiones conformadas:
+1. **Entity–relationship model** and **dimensional model** (star schema).
+2. **ETL** from raw data (`public`) to the data warehouse (`dwh`) through a `staging` area.
+3. **CLTV** per customer, computed as
+   `CLTV = Revenue_t × Margin_t × Frequency_t × Retention_t`
+   together with **recency**, **retention rate**, **average order value** and **return rate**.
+4. **PCA(2) + KMeans(k=3)** on 8 standardised features to segment the customer base.
+5. **Editorial dashboard**: static HTML plus a Flask backend for the customer profile, cluster simulator and live filters on the warehouse.
 
-![Modelo dimensional](docs/report/Images/dim_diagram.png)
+## Data model
 
-El diagrama Entidad–Relación de partida vive en `docs/er_diagram.md` y se renderiza así:
+Star schema with two fact tables (`fact_sales`, `fact_returns`) and four conformed dimensions:
 
-![Diagrama Entidad–Relación](docs/report/Images/er_diagram.png)
+![Dimensional model](docs/report/Images/dim_diagram.png)
 
-## CLTV y segmentación
+The source entity–relationship diagram lives in `docs/er_diagram.md` and renders as:
 
-Distribución del CLTV en escala log — la asimetría justifica el uso de la mediana como medida central:
+![Entity–relationship diagram](docs/report/Images/er_diagram.png)
 
-![Distribución del CLTV](docs/report/Images/cltv_distribution.png)
+## CLTV and segmentation
 
-La elección de k se defiende con la curva del codo, silhouette y Davies–Bouldin:
+CLTV distribution on a log scale. The skew justifies the median as the central measure:
 
-![Curva del codo para KMeans](docs/report/Images/elbow.png)
+![CLTV distribution](docs/report/Images/cltv_distribution.png)
 
-PCA(2) reduce las 8 features a un plano interpretable (PC1 ≈ valor, PC2 ≈ fricción):
+The choice of k is defended with the elbow curve, silhouette and Davies–Bouldin:
 
-![Clusters en el espacio PCA](docs/report/Images/pca_clusters.png)
+![Elbow curve for KMeans](docs/report/Images/elbow.png)
+
+PCA(2) reduces the 8 features to an interpretable plane (PC1 ≈ value, PC2 ≈ friction):
+
+![Clusters in PCA space](docs/report/Images/pca_clusters.png)
 
 ## Dashboard
 
-Seis capítulos navegables, cada uno etiquetado contra las 4 analíticas clásicas (descriptiva / diagnóstica / predictiva / prescriptiva).
+Six navigable chapters, each labelled against the four classic analytics types (descriptive / diagnostic / predictive / prescriptive).
 
-| Capítulo | Captura |
+| Chapter | Screenshot |
 |---|---|
-| **I · Visión General** — KPIs del periodo + series del DWH | ![Visión General](docs/report/Images/dashboard_overview.png) |
-| **II · Clientes y CLTV** — Histograma log, ECDF, Lorenz, Pareto explícito | ![Clientes](docs/report/Images/dashboard_clientes.png) |
-| **III · Segmentación** — PCA scatter, cargas factoriales, simulador de cluster | ![Segmentación](docs/report/Images/dashboard_segmentacion.png) |
-| **IV · Productos** — Top SKUs, motivos de devolución, ratio devolución/venta | ![Productos](docs/report/Images/dashboard_productos.png) |
-| **V · Ficha de cliente** — Búsqueda en vivo, radar, perfil RFM extendido, timeline | ![Ficha](docs/report/Images/dashboard_ficha.png) |
-| **VI · Metodología** — Trazabilidad KPI → SQL, 5 C del dato, regla de Kaiser | ![Metodología](docs/report/Images/dashboard_metodologia.png) |
+| **I · Overview** — period KPIs and warehouse time series | ![Overview](docs/report/Images/dashboard_overview.png) |
+| **II · Customers and CLTV** — log histogram, ECDF, Lorenz curve, explicit Pareto | ![Customers](docs/report/Images/dashboard_clientes.png) |
+| **III · Segmentation** — PCA scatter, factor loadings, cluster simulator | ![Segmentation](docs/report/Images/dashboard_segmentacion.png) |
+| **IV · Products** — top SKUs, return reasons, return-to-sale ratio | ![Products](docs/report/Images/dashboard_productos.png) |
+| **V · Customer profile** — live search, radar, extended RFM profile, timeline | ![Profile](docs/report/Images/dashboard_ficha.png) |
+| **VI · Methodology** — KPI → SQL traceability, the 5 Cs of data, Kaiser rule | ![Methodology](docs/report/Images/dashboard_metodologia.png) |
 
-## Arquitectura técnica
+## Architecture
 
-- **Lenguaje**: Python 3.11+ (entorno conda `UAX`)
-- **Base de datos**: PostgreSQL en Docker, `localhost:5433`, BD `saleshealth`
-- **Tres esquemas en la misma BD**:
-  - `public` — datos crudos (raw)
-  - `staging` — datos limpios y normalizados
-  - `dwh` — modelo estrella (`dim_*`, `fact_*`)
-- **Orquestación ETL**: notebooks Jupyter numerados
-- **Dashboard**: HTML estático generado por `dashboard/html/build.py` + backend Flask (`server.py`) para endpoints en vivo (ficha de cliente, simulador, filtros)
-- **Configuración**: `python-dotenv` con `.env`
+- **Language**: Python 3.11+ (conda environment `UAX`)
+- **Database**: PostgreSQL 16 in Docker, `localhost:5433`, database `saleshealth`
+- **Three schemas in the same database**:
+  - `public` — raw data
+  - `staging` — cleaned and typed copies
+  - `dwh` — star schema (`dim_*`, `fact_*`)
+- **ETL orchestration**: numbered Jupyter notebooks calling reusable code in `src/`
+- **Dashboard**: static HTML generated by `dashboard/html/build.py` plus a Flask backend (`server.py`) for live endpoints (customer profile, simulator, filters)
+- **Configuration**: `python-dotenv` with `.env`
 
-## Requisitos previos
-
-- Conda / Miniconda con un entorno llamado `UAX` (Python 3.11+).
-- Docker con PostgreSQL escuchando en `localhost:5433`, BD `saleshealth` creada y tablas crudas en el esquema `public`.
-
-## Setup
+## Quickstart
 
 ```bash
-# 1. Situarse en la carpeta del proyecto
-cd Proyecto-Final
-
-# 2. Crear el entorno conda (si no existe)
-conda create -n UAX python=3.11
-conda activate UAX
-
-# 3. Instalar dependencias
-conda run -n UAX pip install -r requirements.txt
-
-# 4. Configurar variables de entorno
-cp .env.example .env
-#  → editar .env y rellenar DB_USER y DB_PASSWORD
+conda create -n UAX python=3.11 && conda activate UAX
+pip install -r requirements.txt
+cp .env.example .env            # fill in DB_USER and DB_PASSWORD
+docker compose up -d            # PostgreSQL 16 on localhost:5433
 ```
 
-Todos los comandos Python del proyecto se invocan con `conda run -n UAX ...`.
+The raw tables in the `public` schema are provided by the course and are not part of this repository. Restore them into the `saleshealth` database before running the pipeline. Without them, the DWH tests skip automatically and the dashboard falls back to the committed parquet and joblib artifacts.
 
-## Ejecución del pipeline
+## Running the pipeline
 
-Los notebooks están numerados y deben ejecutarse en orden:
+The notebooks are numbered and run in order:
 
-| # | Notebook | Propósito |
-|---|----------|-----------|
-| 00 | `00_exploration.ipynb` | Exploración del dataset crudo en `public` |
-| 01 | `01_etl_staging.ipynb` | Limpieza y carga `public → staging` |
-| 02 | `02_etl_dwh.ipynb` | Carga `staging → dwh` (dimensiones y hechos) |
-| 03 | `03_cltv_calculation.ipynb` | Cálculo del CLTV por cliente → `data/processed/cltv.parquet` |
-| 04 | `04_customer_metrics.ipynb` | Recencia, retención, AOV → `data/processed/customer_metrics.parquet` |
+| # | Notebook | Purpose |
+|---|----------|---------|
+| 00 | `00_exploration.ipynb` | Explore the raw dataset in `public` |
+| 01 | `01_etl_staging.ipynb` | Clean and load `public → staging` |
+| 02 | `02_etl_dwh.ipynb` | Load `staging → dwh` (dimensions and facts) |
+| 03 | `03_cltv_calculation.ipynb` | CLTV per customer → `data/processed/cltv.parquet` |
+| 04 | `04_customer_metrics.ipynb` | Recency, retention, AOV → `data/processed/customer_metrics.parquet` |
 | 05 | `05_pca_clustering.ipynb` | PCA + KMeans → `models/customer_segments.parquet` + joblibs |
 
-Para abrirlos:
+```bash
+jupyter notebook
+```
+
+## Launching the dashboard
+
+Once the parquet files and the model joblibs exist:
 
 ```bash
-conda run -n UAX jupyter notebook
+./dev.sh                                    # build + open + Flask on localhost:8001
 ```
 
-## Lanzar el dashboard
-
-Una vez generados los parquets y los `joblib` del modelo:
+Or step by step:
 
 ```bash
-# Atajo: build + open + Flask en localhost:8001
-./dev.sh
+python -m dashboard.html.build              # regenerate the static HTML (reads parquets + joblibs)
+python -m dashboard.html.server             # Flask backend (API + static serving)
 ```
 
-O paso a paso:
+The dashboard is served at `http://localhost:8001`. When Postgres is unreachable the views degrade to an offline mode that still works from the parquet files.
+
+## Tests and lint
 
 ```bash
-# Re-generar el HTML estático (lee parquets + joblibs)
-conda run -n UAX python -m dashboard.html.build
-
-# Levantar el backend Flask (API + servir el HTML)
-conda run -n UAX python -m dashboard.html.server
+pytest          # analytics unit tests always run; DWH integrity tests skip without Postgres
+ruff check .    # line-length 100, target py311
 ```
 
-El dashboard se sirve en `http://localhost:8001`. Cuando Postgres no está accesible, las vistas se degradan a un modo "offline" que sigue funcionando con los parquets.
-
-## Tests y lint
-
-```bash
-# Tests (los DB-dependientes auto-skipean si Postgres no responde)
-conda run -n UAX pytest tests/
-
-# Un solo test
-conda run -n UAX pytest tests/test_cltv.py::test_cltv_formula_consistency
-
-# Lint con ruff (line-length=100, target py311)
-conda run -n UAX ruff check .
-```
-
-## Estructura del proyecto
+## Project structure
 
 ```
-Proyecto-Final/
-├── config/                  # Singleton Settings cargado desde .env
-├── sql/
-│   ├── 02_dwh_schema/       # DDL: CREATE SCHEMA + dim_* + fact_*
-│   └── 03_transformations/  # Transformaciones staging → dwh (numeradas 10_, 20_, ...)
-├── notebooks/               # 6 notebooks numerados (orquestan el pipeline)
-├── src/                     # Código reutilizable
-│   ├── db/                  # Engine singleton + helpers SQL
-│   ├── etl/                 # Cargas de directorios SQL
-│   ├── analytics/           # CLTV, métricas, clustering
-│   └── utils/               # Logger y utilidades
-├── dashboard/
-│   └── html/                # Dashboard editorial (build + Flask + views)
-│       ├── build.py         # Genera index.html a partir de parquets + DWH
-│       ├── server.py        # Flask: API ficha + simulador + serve estático
-│       ├── views/           # Una vista por capítulo
-│       ├── theme.py         # Paleta + plantilla Plotly
-│       └── style.css        # CSS editorial
-├── data/                    # Datos locales (raw / processed) — ignorados por git
-├── models/                  # joblibs del PCA / scaler / KMeans + customer_segments.parquet
-├── docs/
-│   ├── er_diagram.md        # Diagrama ER en Mermaid
-│   ├── dimensional_diagram.md
-│   ├── Dashboard.md         # Decisiones de diseño del dashboard
-│   ├── INFORME.md           # Borrador del informe en Markdown
-│   └── report/              # Informe LaTeX completo + Images/
-└── tests/                   # pytest
+config/                  # Settings singleton loaded from .env
+sql/
+  02_dwh_schema/         # DDL: CREATE SCHEMA + dim_* + fact_*
+  03_transformations/    # staging → dwh transformations (numbered 10_, 20_, ...)
+notebooks/               # 6 numbered notebooks orchestrating the pipeline
+src/
+  db/                    # Engine singleton + SQL helpers
+  etl/                   # SQL directory loaders
+  analytics/             # CLTV, metrics, clustering
+  utils/                 # Logger and utilities
+dashboard/html/          # Editorial dashboard (build + Flask + views)
+  build.py               # Generates index.html from parquets + DWH
+  server.py              # Flask: profile API, simulator, static serving
+  views/                 # One view per chapter
+  theme.py               # Palette + Plotly template
+  style.css              # Editorial CSS
+data/                    # Local data (raw / processed), gitignored
+models/                  # PCA / scaler / KMeans joblibs + customer_segments.parquet
+docs/
+  er_diagram.md          # ER diagram in Mermaid
+  dimensional_diagram.md
+  Dashboard.md           # Dashboard design decisions
+  report/                # Full LaTeX report + Images/
+tests/                   # pytest
+.github/workflows/       # ruff + pytest on every push
 ```
 
-## Decisiones documentadas
+## Documented decisions
 
-- **Esquema estrella, no copo de nieve** — dos hechos (ventas + devoluciones) cubren el ciclo de vida del cliente sin normalizar las dimensiones más allá de lo necesario.
-- **CLTV con ventana fija de 72 meses** — denominador rígido para `retention_rate`; los clientes nuevos quedan castigados, documentado como limitación en la vista VI.
-- **PCA(2)** cubre ~80 % de la varianza y los dos primeros autovalores pasan la regla de Kaiser (λ ≥ 1) — la elección de 2 componentes se evalúa contra ambos criterios.
-- **k = 3** se defiende con curva del codo, silhouette máxima y Davies–Bouldin mínima — las tres métricas coinciden y los 3 segmentos resultantes son accionables.
-- **Dataset 100 % sintético** — los hallazgos son consistentes pero no transferibles a operación real; declarado explícitamente en el footer del dashboard y en la sección VI · F.
+- **Star schema, not snowflake**: two facts (sales and returns) cover the customer life cycle without normalising the dimensions further than needed.
+- **CLTV with a fixed 72-month window**: rigid denominator for `retention_rate`. New customers are penalised, documented as a limitation in chapter VI.
+- **PCA(2)** covers ~80 % of the variance and the first two eigenvalues pass the Kaiser rule (λ ≥ 1). The choice of two components is checked against both criteria.
+- **k = 3** is defended with the elbow curve, maximum silhouette and minimum Davies–Bouldin. The three metrics agree and the resulting segments are actionable.
+- **Fully synthetic dataset**: results are consistent but not transferable to real operations, stated explicitly in the dashboard footer and in section VI · F.
