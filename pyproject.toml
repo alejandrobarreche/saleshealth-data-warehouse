@@ -23,7 +23,8 @@ python_files = ["test_*.py"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["notebooks", "docs"]
 
 [tool.ruff.lint]
-# E402: sys.path manipulation before imports es patrón estándar en Streamlit multipage
+# E402: sys.path manipulation before imports in the dashboard entry points
 per-file-ignores = {"dashboard/**" = ["E402"]}

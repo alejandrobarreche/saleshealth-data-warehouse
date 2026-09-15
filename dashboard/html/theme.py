@@ -107,8 +107,10 @@ def fmt_money(v: float, *, currency: str = "€", short: bool = False) -> str:
     if v is None:
         return "—"
     if short:
-        if abs(v) >= 1_000_000: return f"{v/1_000_000:,.2f} M{currency}".replace(",", " ").replace(".", ",")
-        if abs(v) >= 1_000:     return f"{v/1_000:,.1f} k{currency}".replace(",", " ").replace(".", ",")
+        if abs(v) >= 1_000_000:
+            return f"{v/1_000_000:,.2f} M{currency}".replace(",", " ").replace(".", ",")
+        if abs(v) >= 1_000:
+            return f"{v/1_000:,.1f} k{currency}".replace(",", " ").replace(".", ",")
     return f"{v:,.2f} {currency}".replace(",", " ").replace(".", ",")
 
 

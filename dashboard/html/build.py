@@ -14,7 +14,6 @@ Para personalizar:
 """
 from __future__ import annotations
 
-import datetime as _dt
 import sys
 from pathlib import Path
 

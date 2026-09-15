@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from src.db import run_sql, run_sql_file
+from src.db import run_sql_file
 from src.utils import get_logger
 
 log = get_logger("etl.load")
