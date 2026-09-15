@@ -1,0 +1,20 @@
+# Local PostgreSQL for the SalesHealth project.
+#   docker compose up -d
+# Matches the defaults in .env.example (localhost:5433, db saleshealth).
+# The raw tables in the `public` schema are provided by the course and must be
+# restored into this database before running the notebooks.
+services:
+  postgres:
+    image: postgres:16
+    container_name: saleshealth-postgres
+    environment:
+      POSTGRES_DB: saleshealth
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    volumes:
+      - saleshealth_pgdata:/var/lib/postgresql/data
+
+volumes:
+  saleshealth_pgdata:
