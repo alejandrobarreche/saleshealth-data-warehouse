@@ -1,6 +1,6 @@
 # SalesHealth — Data Warehouse, CLTV and Customer Segmentation
 
-[![CI](https://github.com/alejandrobarreche/Data-Management-Saleshealth/actions/workflows/ci.yml/badge.svg)](https://github.com/alejandrobarreche/Data-Management-Saleshealth/actions/workflows/ci.yml)
+[![CI](https://github.com/alejandrobarreche/saleshealth-data-warehouse/actions/workflows/ci.yml/badge.svg)](https://github.com/alejandrobarreche/saleshealth-data-warehouse/actions/workflows/ci.yml)
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E)
